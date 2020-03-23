@@ -86,6 +86,7 @@ void configure_it(void) {
 	EXTI -> FTSR = EXTI->FTSR | (1<<13); // Falling trigger selection register, user button send falling signal
 	NVIC->ISER[1] = NVIC->ISER[1]| (1 << 8); //Activate EXTI 15-10
 	//All exti are multiplex, EXTI1 for pin1, EXTI13 for pin 13
+	//p210-211
 
 }
 void configure_afio_exti_pc13(void) {
