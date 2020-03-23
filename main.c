@@ -1,5 +1,5 @@
 #include "stm32f10x.h"
-
+//https://www.st.com/content/ccc/resource/technical/document/reference_manual/59/b9/ba/7f/11/af/43/d5/CD00171190.pdf/files/CD00171190.pdf/jcr:content/translations/en.CD00171190.pdf
 
 int rand(void);
 void configure_gpio_pa5(void) ;
@@ -83,8 +83,9 @@ void configure_it(void) {
 	TIM2->DIER = TIM2->DIER | (1 << 0); //Interupt if overflow
 	TIM3->DIER = TIM3->DIER | (1 << 0); //Interupt if overflow
 	EXTI->IMR = EXTI->IMR | (1<<13); //Allow the pin 13 to interupt, befor that use must configure it at an alternate func
-	EXTI -> FTSR = EXTI->FTSR | (1<<13); // Falling trigger selection register 
+	EXTI -> FTSR = EXTI->FTSR | (1<<13); // Falling trigger selection register, user button send falling signal
 	NVIC->ISER[1] = NVIC->ISER[1]| (1 << 8); //Activate EXTI 15-10
+	//All exti are multiplex, EXTI1 for pin1, EXTI13 for pin 13
 
 }
 void configure_afio_exti_pc13(void) {
@@ -97,7 +98,7 @@ void configure_afio_exti_pc13(void) {
 void TIM2_IRQHandler(void){
 	reset_gpio(GPIOA,5);
 	stop_timer(TIM2);
-	configure_timer(TIM3,7199,10*rand());
+	configure_timer(TIM3,7199,10*rand()); 
 	start_timer(TIM3);
 	TIM2->SR = TIM2->SR &~TIM_SR_UIF; //Put 0 on the uif bit of the timer
 }
@@ -126,7 +127,7 @@ void EXTI15_10_IRQHandler(void){
 	}
 	EXTI->PR = EXTI->PR | (1 << 13); // Validation
 }
-
+//TAKE ON OPENCLASSROOM
 int rand(){
 	static int randomseed = 0;
 	randomseed = (randomseed * 9301 + 49297) % 233280;
